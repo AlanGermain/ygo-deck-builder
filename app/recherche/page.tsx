@@ -104,20 +104,24 @@ async function fetchCards(rawParams: SearchParams) {
 }
 
 async function fetchArchetypes(): Promise<string[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('cards')
-    .select('archetype')
-    .not('archetype', 'is', null)
-    .order('archetype')
-    .limit(20000)
-  if (error) return []
-  const rows = data as Array<{ archetype: string | null }> | null
-  const seen = new Set<string>()
-  for (const row of rows ?? []) {
-    if (row.archetype != null) seen.add(row.archetype)
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('cards')
+      .select('archetype')
+      .not('archetype', 'is', null)
+      .order('archetype')
+      .limit(20000)
+    if (error) return []
+    const rows = data as Array<{ archetype: string | null }> | null
+    const seen = new Set<string>()
+    for (const row of rows ?? []) {
+      if (row.archetype != null) seen.add(row.archetype)
+    }
+    return Array.from(seen)
+  } catch {
+    return []
   }
-  return Array.from(seen)
 }
 
 export default async function RecherchePage({
