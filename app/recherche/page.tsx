@@ -141,9 +141,9 @@ export default async function RecherchePage({
     const result = await fetchCards(rawParams)
     cards = result.cards
     total = result.total
-  } catch {
-    fetchError =
-      'Impossible de charger les cartes. Vérifiez que Supabase est configuré et que les cartes ont été importées.'
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    fetchError = `Erreur Supabase : ${msg}`
   }
 
   const archetypes = await fetchArchetypes()
